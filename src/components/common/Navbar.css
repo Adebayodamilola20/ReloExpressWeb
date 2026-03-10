@@ -1,0 +1,139 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 20px 0;
+    background: transparent;
+    transition: background 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar.scrolled {
+    padding: 14px 0;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+/* Logo */
+.logo {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    transition: color 0.3s;
+}
+
+.navbar.scrolled .logo {
+    color: var(--primary-dark);
+}
+
+.logo span {
+    color: var(--primary-teal);
+}
+
+.logo-icon {
+    color: var(--primary-teal);
+}
+
+/* Nav links */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-links a {
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 8px;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.navbar.scrolled .nav-links a {
+    color: var(--text-muted);
+}
+
+.nav-links a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar.scrolled .nav-links a:hover {
+    color: var(--primary-dark);
+    background: #f6f7f8;
+}
+
+/* CTA button */
+.nav-cta {
+    margin-left: 12px;
+    padding: 10px 22px !important;
+    font-size: 14px !important;
+    border-radius: 50px !important;
+}
+
+/* Mobile toggle */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    transition: color 0.3s;
+}
+
+.navbar.scrolled .mobile-menu-btn {
+    color: var(--primary-dark);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 24px 24px;
+        box-shadow: var(--shadow-md);
+        gap: 4px;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a,
+    .navbar.scrolled .nav-links a {
+        color: var(--text-main);
+        width: 100%;
+        border-radius: 8px;
+    }
+
+    .nav-cta {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+    }
+}
