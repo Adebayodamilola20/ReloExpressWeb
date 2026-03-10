@@ -1,7 +1,6 @@
 import Navbar from './components/common/Navbar';
 import Hero from './components/home/Hero';
 import PartnerTypes from './components/home/PartnerTypes';
-import PhotoCollage from './components/home/PhotoCollage';
 import Benefits from './components/home/Benefits';
 import CityVision from './components/home/CityVision';
 import FAQ from './components/home/FAQ';
@@ -18,7 +17,6 @@ function App() {
       <Navbar />
       <Hero />
       <PartnerTypes />
-      <PhotoCollage />
       <Benefits />
       <HowAppWorks />
       <CityVision />

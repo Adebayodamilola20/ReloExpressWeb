@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import VerificationMethod from './VerificationMethod';
 import './RegistrationForm.css';
 
 const cities = ['Lagos', 'Abuja', 'Port Harcourt', 'Kano', 'Ibadan', 'Benin City'];
@@ -8,11 +9,38 @@ const RegistrationForm: React.FC = () => {
     const [email, setEmail] = useState('');
     const [city, setCity] = useState('Lagos');
     const [agreed, setAgreed] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!email || !phone || !city) {
+            setError('Please fill in all fields');
+            return;
+        }
+
+        if (!agreed) {
+            setError('Please agree to the Terms and Conditions');
+            return;
+        }
+
+        // Simulating form submission
+        console.log('Form submitted:', { email, phone, city });
+        setIsSubmitted(true);
+    };
+
+    if (isSubmitted) {
+        return <VerificationMethod phone={phone} />;
+    }
 
     return (
         <div className="reg-form-wrap">
-            <form className="reg-form" onSubmit={(e) => e.preventDefault()}>
+            <form className="reg-form" onSubmit={handleSubmit}>
                 <h2>Become a delivery partner</h2>
+
+                {error && <div className="form-error">{error}</div>}
 
                 <div className="field-group">
                     <label htmlFor="email">Email</label>
@@ -75,8 +103,6 @@ const RegistrationForm: React.FC = () => {
                     </span>
                 </label>
 
-
-
                 <button type="submit" className="reg-submit-btn">
                     Register as a delivery partner
                 </button>
@@ -84,8 +110,6 @@ const RegistrationForm: React.FC = () => {
                 <p className="login-line">
                     Already have an account? <a href="#">Log in ↗</a>
                 </p>
-
-
             </form>
         </div>
     );

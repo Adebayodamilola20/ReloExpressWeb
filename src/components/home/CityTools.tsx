@@ -80,10 +80,10 @@ const CityTools: React.FC = () => {
                         <motion.div
                             key={activeTab.id}
                             className="tool-display"
-                            initial={{ opacity: 0, x: 20 }}
+                            initial={{ opacity: 0, x: 50 }}
                             animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.4 }}
+                            exit={{ opacity: 0, x: -50 }}
+                            transition={{ duration: 0.5 }}
                         >
                             <div className="tool-image">
                                 <img src={activeTab.image} alt={activeTab.title} />

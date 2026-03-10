@@ -1,12 +1,14 @@
 .city-tools {
-    padding: 120px 0 60px;
+    padding: 100px 0 60px;
     background-color: #ffffff;
     color: var(--primary-dark);
+    overflow: hidden;
 }
 
 .tools-header {
     text-align: center;
     margin-bottom: 60px;
+    padding: 0 20px;
 }
 
 .tools-header h2 {
@@ -20,21 +22,13 @@
     display: flex;
     justify-content: center;
     gap: 8px;
+    flex-wrap: wrap;
     background: #f0f1f2;
     padding: 6px;
     border-radius: 50px;
     width: fit-content;
     margin: 0 auto;
-    overflow-x: auto;
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-}
-
-.tab-list::-webkit-scrollbar {
-    display: none;
-    /* Chrome, Safari and Opera */
+    max-width: 100%;
 }
 
 .tab-btn {
@@ -48,7 +42,6 @@
     cursor: pointer;
     transition: var(--transition);
     white-space: nowrap;
-    /* Prevent text wrapping */
 }
 
 .tab-btn:hover {
@@ -64,6 +57,7 @@
     max-width: 1100px;
     margin: 0 auto;
     min-height: 500px;
+    padding: 0 20px;
 }
 
 .tool-display {
@@ -119,5 +113,25 @@
 
     .tool-info h3 {
         font-size: 2rem;
+    }
+
+    .tab-list {
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .tab-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        background: #f0f1f2;
+        margin-right: 8px;
+        margin-bottom: 8px;
     }
 }

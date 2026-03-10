@@ -40,10 +40,10 @@ const Safety: React.FC = () => {
                         <motion.div
                             key={index}
                             className="safety-card"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.6, delay: index * 0.1 }}
                         >
                             <div className="safety-icon-box">{feature.icon}</div>
                             <h3>{feature.title}</h3>
