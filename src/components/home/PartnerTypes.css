@@ -1,10 +1,10 @@
 .partner-earn {
-    padding: 120px 0;
+    padding: 160px 0;
     background: #ffffff;
 }
 
 .earn-header {
-    margin-bottom: 80px;
+    margin-bottom: 100px;
     text-align: left;
 }
 
@@ -27,14 +27,15 @@
 .zigzag-list {
     display: flex;
     flex-direction: column;
-    gap: 120px;
-    /* Increased spacing between items */
+    gap: 160px;
+    /* Even more space between items */
 }
 
 .zigzag-item {
     display: flex;
     align-items: center;
-    gap: 100px;
+    gap: 140px;
+    /* Larger gap between image and text */
 }
 
 /* Default: Image on Left, Text on Right */

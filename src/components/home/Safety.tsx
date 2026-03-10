@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Info, MapPin } from 'lucide-react';
+import { Shield, Info } from 'lucide-react';
 import './Safety.css';
 
 const safetyFeatures = [
@@ -15,7 +15,7 @@ const safetyFeatures = [
         description: 'We encourage responsible usage of e-vehicles to ensure the safety of riders and the wider public. Our Safety Toolkit allows riders to use a Beginner Mode, learn about local rules, and read safety instructions and tips.'
     },
     {
-        icon: <MapPin size={32} />,
+        icon: <div className="parking-icon-p">P</div>,
         title: 'Parking responsibly',
         description: "We educate our users to park responsibly and encourage them to report bad examples they see on the streets. Additionally, our AI technology detects parking violations and shows riders how to park their scooters safely."
     }

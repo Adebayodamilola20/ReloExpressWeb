@@ -20,12 +20,21 @@
     display: flex;
     justify-content: center;
     gap: 8px;
-    flex-wrap: wrap;
     background: #f0f1f2;
     padding: 6px;
     border-radius: 50px;
     width: fit-content;
     margin: 0 auto;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.tab-list::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
 }
 
 .tab-btn {
@@ -38,6 +47,8 @@
     color: #444;
     cursor: pointer;
     transition: var(--transition);
+    white-space: nowrap;
+    /* Prevent text wrapping */
 }
 
 .tab-btn:hover {
