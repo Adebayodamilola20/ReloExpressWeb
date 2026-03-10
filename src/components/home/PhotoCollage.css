@@ -2,19 +2,21 @@
     width: 100%;
     background: #111;
     overflow: hidden;
+    padding-top: 10px;
+    /* Slight offset if needed */
 }
 
 .collage-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: 200px 210px;
-    gap: 4px;
+    grid-template-rows: repeat(2, 280px);
+    gap: 2px;
 }
 
-/* Row 1 */
+/* Specific layout to look like Image 1 style */
 .collage-item:nth-child(1) {
     grid-column: span 2;
-    grid-row: 1;
+    grid-row: span 2;
 }
 
 .collage-item:nth-child(2) {
@@ -32,19 +34,18 @@
     grid-row: 1;
 }
 
-/* Row 2 */
 .collage-item:nth-child(5) {
-    grid-column: span 1;
+    grid-column: span 2;
     grid-row: 2;
 }
 
 .collage-item:nth-child(6) {
-    grid-column: span 3;
+    grid-column: span 1;
     grid-row: 2;
 }
 
 .collage-item:nth-child(7) {
-    grid-column: span 2;
+    grid-column: span 1;
     grid-row: 2;
 }
 
@@ -62,33 +63,22 @@
 }
 
 .collage-item:hover img {
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
-.collage-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(50, 187, 120, 0.15);
-    transition: all 0.3s ease;
-}
-
-.collage-item:hover .collage-overlay {
-    background: rgba(50, 187, 120, 0.05);
-}
-
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .collage-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(4, 180px);
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, 200px);
     }
 
     .collage-item:nth-child(n) {
         grid-column: span 1;
-        grid-row: auto;
+        grid-row: span 1;
     }
 
-    .collage-item:nth-child(1),
-    .collage-item:nth-child(7) {
+    .collage-item:nth-child(1) {
         grid-column: span 2;
+        grid-row: span 2;
     }
 }

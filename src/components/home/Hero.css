@@ -1,10 +1,10 @@
 .hero {
     position: relative;
-    padding: 120px 0 80px;
-    min-height: 95vh;
+    padding: 100px 0 60px;
+    min-height: 700px;
     display: flex;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
     background-color: #1a1a2e;
 }
 

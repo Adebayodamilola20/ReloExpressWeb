@@ -75,9 +75,7 @@ const RegistrationForm: React.FC = () => {
                     </span>
                 </label>
 
-                <p className="marketing-note">
-                    Once you've become a delivery partner, we will occasionally send you offers and promotions related to our services. You can always unsubscribe by changing your communication preferences.
-                </p>
+
 
                 <button type="submit" className="reg-submit-btn">
                     Register as a delivery partner
@@ -87,10 +85,7 @@ const RegistrationForm: React.FC = () => {
                     Already have an account? <a href="#">Log in ↗</a>
                 </p>
 
-                <p className="fleet-line">
-                    If you have multiple vehicles and drivers,{' '}
-                    <a href="#">register as a Fleet owner</a>.
-                </p>
+
             </form>
         </div>
     );

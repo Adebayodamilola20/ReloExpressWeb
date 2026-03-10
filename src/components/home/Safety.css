@@ -1,0 +1,56 @@
+.safety-section {
+    padding: 100px 0;
+    background-color: #ffffff;
+    color: var(--primary-dark);
+}
+
+.safety-header {
+    margin-bottom: 60px;
+}
+
+.safety-header h2 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+}
+
+.safety-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;
+}
+
+.safety-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.safety-icon-box {
+    margin-bottom: 24px;
+    color: var(--primary-dark);
+}
+
+.safety-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.3;
+}
+
+.safety-card p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+    .safety-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .safety-header h2 {
+        font-size: 2.2rem;
+    }
+}

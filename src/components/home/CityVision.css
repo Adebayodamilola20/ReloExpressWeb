@@ -3,10 +3,13 @@
     background-color: #111111;
     color: white;
     position: relative;
+    text-align: left;
 }
 
 .vision-content {
-    max-width: 900px;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
 }
 
 .vision-text h2 {
@@ -55,12 +58,6 @@
     opacity: 0.8;
 }
 
-.vision-pagination {
-    display: flex;
-    gap: 12px;
-    margin-top: 60px;
-}
-
 .dot {
     width: 8px;
     height: 8px;
@@ -75,10 +72,34 @@
 
 .vision-controls {
     position: absolute;
-    bottom: 120px;
+    bottom: -110px;
+    left: 0;
     right: 0;
     display: flex;
-    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+}
+
+.vision-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 60px;
+    width: 100%;
+    position: absolute;
+    bottom: -100px;
+    left: 0;
+}
+
+.control-btn,
+.vision-pagination {
+    pointer-events: auto;
+}
+
+.vision-controls .control-btn {
+    position: relative;
+    z-index: 10;
 }
 
 .control-btn {

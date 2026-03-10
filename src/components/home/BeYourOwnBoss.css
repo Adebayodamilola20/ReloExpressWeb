@@ -1,0 +1,120 @@
+.be-your-boss {
+    padding: 80px 0 120px;
+    background-color: #ffffff;
+}
+
+.boss-card {
+    background-color: var(--primary-teal);
+    border-radius: 24px;
+    padding: 80px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.boss-info {
+    flex: 1.5;
+    z-index: 2;
+}
+
+.boss-info h2 {
+    font-size: 3.5rem;
+    color: white;
+    margin-bottom: 24px;
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+.boss-info p {
+    font-size: 1.4rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.boss-cta {
+    display: inline-block;
+    padding: 20px 48px;
+    background-color: white;
+    color: var(--primary-teal);
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    transition: var(--transition);
+}
+
+.boss-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    background-color: #f8f8f8;
+}
+
+.boss-mockup {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.mini-phone {
+    width: 280px;
+    height: 560px;
+    background: #111;
+    border-radius: 36px;
+    padding: 10px;
+    transform: rotate(0deg);
+    /* Counter-rotate logic handled by motion.div */
+}
+
+.mini-screen {
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.mini-header {
+    background: #32bb78;
+    color: white;
+    text-align: center;
+    padding: 30px 10px 15px;
+    font-weight: 700;
+}
+
+.mini-map {
+    flex: 1;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-circle {
+    width: 150px;
+    height: 150px;
+    border: 2px solid #32bb78;
+    border-radius: 50%;
+    background: rgba(50, 187, 120, 0.1);
+}
+
+@media (max-width: 1024px) {
+    .boss-card {
+        flex-direction: column;
+        padding: 60px 40px;
+        text-align: center;
+    }
+
+    .boss-info h2 {
+        font-size: 2.5rem;
+    }
+
+    .boss-mockup {
+        margin-top: 40px;
+    }
+}
