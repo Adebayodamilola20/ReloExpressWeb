@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const twilio = require('twilio');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -14,9 +15,11 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(cors());
 
-// Health Check & Root Routes
-app.get('/', (req, res) => res.send('ReloExpress API is Running 🚀'));
-app.get('/health', (req, res) => res.status(200).json({ status: 'ok', timestamp: new Date() }));
+// Serve static files from the Vite build directory
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// Health Check & API Status
+app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', timestamp: new Date() }));
 
 const port = process.env.PORT || 5001;
 
@@ -149,6 +152,11 @@ console.log('Twilio Token present:', !!authToken);
 console.log('Twilio Service present:', !!verifyServiceSid);
 console.log('Is Twilio Configured:', isTwilioConfigured);
 console.log('---------------------------');
+
+// SPA Fallback: Serve index.html for all non-API routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${port}`);
