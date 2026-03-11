@@ -63,6 +63,12 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, on
                 body: JSON.stringify({ phoneNumber: phone, code }),
             });
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('OTP check error:', errorText);
+                throw new Error(`Server responded with ${response.status}`);
+            }
+
             const data = await response.json();
 
             if (data.success) {
@@ -74,6 +80,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, on
                 inputRefs.current[0]?.focus();
             }
         } catch (err) {
+            console.error('OTP Detail Error:', err);
             setError('Connection error. Please try again.');
         } finally {
             setLoading(false);
