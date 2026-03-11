@@ -26,6 +26,10 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                 body: JSON.stringify({ phoneNumber: phone }),
             });
 
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+
             const data = await response.json();
 
             if (data.success) {
@@ -36,7 +40,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
             }
         } catch (error) {
             console.error('SMS Error:', error);
-            showToast('error', 'Network error. Please make sure the server is running.');
+            showToast('error', 'The service is currently waking up (this can take 50 seconds on first use). Please wait and try again.');
         } finally {
             setLoading(false);
         }
