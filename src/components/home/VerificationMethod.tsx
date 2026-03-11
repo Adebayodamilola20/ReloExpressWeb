@@ -44,7 +44,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
             }
         } catch (error) {
             console.error('SMS Error details:', error);
-            showToast('error', 'The service is currently waking up. Please wait 10 seconds and try again.');
+            showToast('error', `Can't reach server: ${API_ENDPOINTS.SEND_SMS}. Please try again in 10s.`);
         } finally {
             setLoading(false);
         }
