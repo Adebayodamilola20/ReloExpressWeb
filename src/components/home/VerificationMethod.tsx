@@ -41,7 +41,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
 
             const data = await response.json();
 
-            if (data.success) {
+            if (data.success && data.message === 'Successfully Sent') {
                 showToast('success', 'Verification code sent to your phone!');
                 setTimeout(() => onSuccess(), 1000); // Navigate to OTP screen
             } else {

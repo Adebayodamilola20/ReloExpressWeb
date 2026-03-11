@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const twilio = require('twilio');
+const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
 
@@ -23,23 +23,16 @@ app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', timest
 
 const port = process.env.PORT || 5001;
 
-// Twilio Configuration
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+// Termii Configuration
+const termiiApiKey = process.env.TERMII_API_KEY;
+const termiiSenderId = process.env.TERMII_SENDER_ID || 'ReloExpress';
+const termiiBaseUrl = 'https://api.ng.termii.com/api';
 
-// Safety check for keys: if they are missing or still placeholder, use Simulation Mode
-const isTwilioConfigured = accountSid && !accountSid.startsWith('AC000') && verifyServiceSid && !verifyServiceSid.startsWith('VA000');
+// Safety check for keys
+const isTermiiConfigured = termiiApiKey && termiiApiKey.length > 10;
 
-// Only initialize Twilio client if keys look real
-let client = null;
-if (isTwilioConfigured) {
-    try {
-        client = twilio(accountSid, authToken);
-    } catch (e) {
-        console.error('Failed to initialize Twilio client:', e.message);
-    }
-}
+// In-memory store for OTPs (Key: phoneNumber, Value: { code, expires })
+const otpStore = {};
 
 /**
  * Handle +234 country code for Nigeria
@@ -47,14 +40,14 @@ if (isTwilioConfigured) {
 const formatPhoneNumber = (phone) => {
     let formatted = phone.trim().replace(/\s+/g, '');
     if (formatted.startsWith('0')) {
-        formatted = '+234' + formatted.substring(1);
-    } else if (!formatted.startsWith('+')) {
-        formatted = '+234' + formatted;
+        formatted = '234' + formatted.substring(1);
+    } else if (formatted.startsWith('+')) {
+        formatted = formatted.substring(1);
     }
     return formatted;
 };
 
-// SMS Verification Endpoint
+// SMS Verification Endpoint (Send OTP)
 app.post('/api/verify/send-sms', async (req, res) => {
     const { phoneNumber } = req.body;
 
@@ -63,80 +56,88 @@ app.post('/api/verify/send-sms', async (req, res) => {
     }
 
     const formattedPhone = formatPhoneNumber(phoneNumber);
+    
+    // Generate 6-digit random code
+    const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Store in memory with 10-minute expiry
+    otpStore[formattedPhone] = {
+        code: generatedCode,
+        expires: Date.now() + 10 * 60 * 1000
+    };
 
-    // If not configured, print to terminal and return success (SIMULATION)
-    if (!isTwilioConfigured || !client) {
+    // Simulation Mode
+    if (!isTermiiConfigured) {
         console.log(`\n================================`);
-        console.log(`[SIMULATION MODE ACTIVE]`);
+        console.log(`[TERMII SIMULATION MODE ACTIVE]`);
         console.log(`To: ${formattedPhone}`);
-        console.log(`Code: 123456`);
-        console.log(`Note: No real SMS sent because keys are missing in .env`);
+        console.log(`Code: ${generatedCode}`);
+        console.log(`Note: No real SMS sent because TERMII_API_KEY is missing in .env`);
         console.log(`================================\n`);
 
         return res.status(200).json({
             success: true,
-            message: '(SIMULATION) Code sent to terminal! Use 123456.'
+            message: 'Successfully Sent',
+            debug: '(SIMULATION) Code sent to terminal!'
         });
     }
 
     try {
-        const verification = await client.verify.v2.services(verifyServiceSid)
-            .verifications
-            .create({ to: formattedPhone, channel: 'sms' });
+        // Use Termii Plain SMS API with Generic Channel
+        const response = await axios.post(`${termiiBaseUrl}/sms/send`, {
+            api_key: termiiApiKey,
+            to: formattedPhone,
+            from: termiiSenderId,
+            sms: `reloExpress: Your verification code is ${generatedCode}. Valid for 10 minutes. Do not share.`,
+            type: 'plain',
+            channel: 'generic'
+        });
+
+        console.log('Termii Send Response:', response.data);
 
         res.status(200).json({
             success: true,
-            message: 'OTP sent successfully via SMS',
-            sid: verification.sid
+            message: 'Successfully Sent',
+            data: response.data
         });
     } catch (error) {
-        console.error('Twilio SMS Error:', error);
+        console.error('Termii SMS Error:', error.response?.data || error.message);
         res.status(500).json({
             success: false,
-            message: 'Twilio error: ' + error.message
+            message: 'Termii error: ' + (error.response?.data?.message || error.message)
         });
     }
 });
 
-// Check OTP Endpoint
+// Check OTP Endpoint (Verify OTP)
 app.post('/api/verify/check-otp', async (req, res) => {
     const { phoneNumber, code } = req.body;
 
     if (!phoneNumber || !code) {
-        return res.status(400).json({ success: false, message: 'Phone number and code are required' });
+        return res.status(400).json({ success: false, message: 'Phone number and verification code are required' });
     }
 
     const formattedPhone = formatPhoneNumber(phoneNumber);
+    const storedData = otpStore[formattedPhone];
 
-    // Simulation Mode Logic
-    if (!isTwilioConfigured || !client) {
-        if (code === '123456') {
-            return res.status(200).json({ success: true, message: 'Verification successful!' });
-        } else {
-            return res.status(400).json({ success: false, message: 'Invalid verification code.' });
-        }
+    if (!storedData) {
+        return res.status(400).json({ success: false, message: 'No OTP record found for this number.' });
     }
 
-    try {
-        const verificationCheck = await client.verify.v2.services(verifyServiceSid)
-            .verificationChecks
-            .create({ to: formattedPhone, code: code });
+    if (Date.now() > storedData.expires) {
+        delete otpStore[formattedPhone];
+        return res.status(400).json({ success: false, message: 'OTP has expired.' });
+    }
 
-        if (verificationCheck.status === 'approved') {
-            res.status(200).json({ success: true, message: 'Verification successful!' });
-        } else {
-            res.status(400).json({ success: false, message: 'Invalid verification code.' });
-        }
-    } catch (error) {
-        console.error('Twilio Verify Check Error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Verification check failed: ' + error.message
-        });
+    if (storedData.code === code) {
+        delete otpStore[formattedPhone]; 
+        return res.status(200).json({ success: true, message: 'Verification successful!' });
+    } else {
+        return res.status(400).json({ success: false, message: 'Invalid verification code.' });
     }
 });
 
-// WhatsApp Verification Endpoint
+// WhatsApp Verification Endpoint (Placeholder)
 app.post('/api/verify/send-whatsapp', (req, res) => {
     res.status(200).json({
         success: false,
@@ -144,13 +145,12 @@ app.post('/api/verify/send-whatsapp', (req, res) => {
     });
 });
 
-// Check Twilio Config on Startup
+// Check Configuration on Startup
 console.log('--- Server Configuration ---');
 console.log('Port:', port);
-console.log('Twilio SID present:', !!accountSid);
-console.log('Twilio Token present:', !!authToken);
-console.log('Twilio Service present:', !!verifyServiceSid);
-console.log('Is Twilio Configured:', isTwilioConfigured);
+console.log('Termii API Key present:', !!termiiApiKey);
+console.log('Termii Sender ID:', termiiSenderId);
+console.log('Is Termii Configured:', isTermiiConfigured);
 console.log('---------------------------');
 
 // SPA Fallback: Serve index.html for all non-API routes
@@ -160,7 +160,7 @@ app.get('*', (req, res) => {
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${port}`);
-    if (!isTwilioConfigured) {
-        console.log(`⚠️  Running in SIMULATION MODE. Use code 123456.`);
+    if (!isTermiiConfigured) {
+        console.log(`⚠️  Running in TERMII SIMULATION MODE. Use code 123456.`);
     }
 });
