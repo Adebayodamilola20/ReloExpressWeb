@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { API_ENDPOINTS } from '../../api/config';
 import './VerificationMethod.css';
 
 interface VerificationMethodProps {
@@ -19,7 +20,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
     const handleSendSMS = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://127.0.0.1:5001/api/verify/send-sms', {
+            const response = await fetch(API_ENDPOINTS.SEND_SMS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phoneNumber: phone }),

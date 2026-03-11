@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../../api/config';
 import './OTPVerification.css';
 
 interface OTPVerificationProps {
@@ -56,7 +57,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, on
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://127.0.0.1:5001/api/verify/check-otp', {
+            const response = await fetch(API_ENDPOINTS.CHECK_OTP, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phoneNumber: phone, code }),
