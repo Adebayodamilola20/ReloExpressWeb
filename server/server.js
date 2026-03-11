@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const port = 5001;
+const port = process.env.PORT || 5001;
 
 // Twilio Configuration
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
