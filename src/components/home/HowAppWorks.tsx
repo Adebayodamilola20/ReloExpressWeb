@@ -32,15 +32,13 @@ const HowAppWorks: React.FC = () => {
             <div className="container app-works-container">
                 <div className="app-works-mockup">
                     <motion.div
-                        className="phone-container"
+                        className="mockup-img-wrapper"
                         initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
                     >
-                        <div className="phone-bezel">
-                            <img src={gekoImg} alt="ReloExpress App Mockup" className="geko-mockup-img" />
-                        </div>
+                        <img src={gekoImg} alt="ReloExpress App Mockup" className="geko-mockup-img" />
                     </motion.div>
                 </div>
 
