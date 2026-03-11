@@ -64,9 +64,14 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, on
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('OTP check error:', errorText);
-                throw new Error(`Server responded with ${response.status}`);
+                try {
+                    const errorData = await response.json();
+                    setError(errorData.message || 'Verification failed.');
+                    setLoading(false);
+                    return;
+                } catch (e) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
             }
 
             const data = await response.json();

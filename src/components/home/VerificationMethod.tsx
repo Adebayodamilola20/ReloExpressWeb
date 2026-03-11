@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { API_ENDPOINTS } from '../../api/config';
+import { API_ENDPOINTS, API_BASE_URL } from '../../api/config';
 import './VerificationMethod.css';
 
 interface VerificationMethodProps {
@@ -29,9 +29,14 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Server error response:', errorText);
-                throw new Error(`Server responded with ${response.status}`);
+                try {
+                    const errorData = await response.json();
+                    showToast('error', errorData.message || 'Server error occurred.');
+                    setLoading(false);
+                    return;
+                } catch (e) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
             }
 
             const data = await response.json();
@@ -44,7 +49,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
             }
         } catch (error) {
             console.error('SMS Error details:', error);
-            showToast('error', `Can't reach server: ${API_ENDPOINTS.SEND_SMS}. Please try again in 10s.`);
+            showToast('error', `Connection error. Please check if the server is running at: ${API_BASE_URL}`);
         } finally {
             setLoading(false);
         }
