@@ -19,6 +19,8 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
 
     const handleSendSMS = async () => {
         setLoading(true);
+        console.log('Sending SMS to:', phone, 'via:', API_ENDPOINTS.SEND_SMS);
+
         try {
             const response = await fetch(API_ENDPOINTS.SEND_SMS, {
                 method: 'POST',
@@ -27,6 +29,8 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
             });
 
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server error response:', errorText);
                 throw new Error(`Server responded with ${response.status}`);
             }
 
@@ -39,8 +43,8 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                 showToast('error', data.message || 'Failed to send verification code.');
             }
         } catch (error) {
-            console.error('SMS Error:', error);
-            showToast('error', 'The service is currently waking up (this can take 50 seconds on first use). Please wait and try again.');
+            console.error('SMS Error details:', error);
+            showToast('error', 'The service is currently waking up. Please wait 10 seconds and try again.');
         } finally {
             setLoading(false);
         }

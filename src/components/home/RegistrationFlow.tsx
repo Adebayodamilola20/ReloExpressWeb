@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle, Upload } from 'lucide-react';
+import { API_BASE_URL } from '../../api/config';
 import './RegistrationFlow.css';
 
 const RegistrationFlow: React.FC = () => {
@@ -15,6 +16,11 @@ const RegistrationFlow: React.FC = () => {
     });
     const [errors, setErrors] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        // Pre-warm the backend (Render cold start)
+        fetch(API_BASE_URL).catch(() => { });
+    }, []);
 
     const validateStep = () => {
         const newErrors: string[] = [];

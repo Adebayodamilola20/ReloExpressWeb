@@ -141,9 +141,18 @@ app.post('/api/verify/send-whatsapp', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+// Check Twilio Config on Startup
+console.log('--- Server Configuration ---');
+console.log('Port:', port);
+console.log('Twilio SID present:', !!accountSid);
+console.log('Twilio Token present:', !!authToken);
+console.log('Twilio Service present:', !!verifyServiceSid);
+console.log('Is Twilio Configured:', isTwilioConfigured);
+console.log('---------------------------');
+
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${port}`);
     if (!isTwilioConfigured) {
-        console.log(`⚠️  Running in SIMULATION MODE. Edit server/.env to enable real SMS.`);
+        console.log(`⚠️  Running in SIMULATION MODE. Use code 123456.`);
     }
 });
