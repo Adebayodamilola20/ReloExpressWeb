@@ -28,41 +28,52 @@
     opacity: 0.9;
 }
 
-.download-btns {
+.download-btns-bolt {
     display: flex;
-    gap: 20px;
+    gap: 16px;
     flex-wrap: wrap;
+    margin-top: 40px;
 }
 
-.download-btn {
+.download-btn-bolt {
     background: white;
-    color: var(--primary-dark);
-    padding: 12px 24px;
-    border-radius: 12px;
+    color: #32bb78;
+    padding: 10px 24px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: var(--transition);
+    gap: 14px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    min-width: 190px;
 }
 
-.download-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+.download-btn-bolt:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
-.btn-text {
+.btn-icon-bolt {
+    color: #32bb78;
+    flex-shrink: 0;
+}
+
+.btn-text-bolt {
     display: flex;
     flex-direction: column;
+    text-align: left;
 }
 
-.btn-text span {
+.btn-subtitle-bolt {
     font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: -2px;
 }
 
-.btn-text strong {
-    font-size: 18px;
+.btn-main-bolt {
+    font-size: 20px;
+    font-weight: 800;
 }
 
 /* Phone Mockup */

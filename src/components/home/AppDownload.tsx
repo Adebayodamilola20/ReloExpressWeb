@@ -20,19 +20,19 @@ const AppDownload: React.FC = () => {
                         with ease. Our app is designed to help you succeed on the road.
                     </p>
 
-                    <div className="download-btns">
-                        <a href="#" className="download-btn">
-                            <Apple size={28} />
-                            <div className="btn-text">
-                                <span>Download on the</span>
-                                <strong>App Store</strong>
+                    <div className="download-btns-bolt">
+                        <a href="#" className="download-btn-bolt">
+                            <Apple className="btn-icon-bolt" size={32} />
+                            <div className="btn-text-bolt">
+                                <span className="btn-subtitle-bolt">DOWNLOAD ON THE</span>
+                                <span className="btn-main-bolt">App Store</span>
                             </div>
                         </a>
-                        <a href="#" className="download-btn">
-                            <Play size={28} fill="currentColor" />
-                            <div className="btn-text">
-                                <span>GET IT ON</span>
-                                <strong>Google Play</strong>
+                        <a href="#" className="download-btn-bolt">
+                            <Play className="btn-icon-bolt" size={32} fill="currentColor" />
+                            <div className="btn-text-bolt">
+                                <span className="btn-subtitle-bolt">GET IT ON</span>
+                                <span className="btn-main-bolt">Google Play</span>
                             </div>
                         </a>
                     </div>
