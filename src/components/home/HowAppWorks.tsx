@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import gekoImg from '../../assets/geko.png';
 import './HowAppWorks.css';
 
 const steps = [
@@ -38,51 +39,7 @@ const HowAppWorks: React.FC = () => {
                         transition={{ duration: 0.8 }}
                     >
                         <div className="phone-bezel">
-                            <div className="phone-notch"></div>
-                            <div className="phone-status-bar">
-                                <span>9:41</span>
-                                <div className="status-icons">
-                                    <div className="signal"></div>
-                                    <div className="wifi"></div>
-                                    <div className="battery"></div>
-                                </div>
-                            </div>
-                            <div className="phone-screen-content">
-                                <div className="app-search-trigger">
-                                    <div className="search-circle">
-                                        <div className="search-handle"></div>
-                                    </div>
-                                </div>
-                                <div className="app-map-bg">
-                                    <div className="map-overlay-circle"></div>
-                                    <div className="map-car-icon">
-                                        <div className="car-shape"></div>
-                                    </div>
-                                </div>
-                                <div className="app-online-bar">
-                                    <div className="chevrons">
-                                        <span></span>
-                                        <span></span>
-                                    </div>
-                                    <span>Go online</span>
-                                </div>
-                                <div className="app-bottom-stats">
-                                    <div className="stat-card">
-                                        <div className="stat-label">
-                                            <span>Today's earnings</span>
-                                            <div className="small-chevron"></div>
-                                        </div>
-                                        <strong>₦12,500</strong>
-                                    </div>
-                                    <div className="stat-card">
-                                        <div className="stat-label">
-                                            <span>Driver score</span>
-                                            <div className="small-chevron"></div>
-                                        </div>
-                                        <strong>98%</strong>
-                                    </div>
-                                </div>
-                            </div>
+                            <img src={gekoImg} alt="ReloExpress App Mockup" className="geko-mockup-img" />
                         </div>
                     </motion.div>
                 </div>

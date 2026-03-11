@@ -13,13 +13,41 @@ const RegistrationFlow: React.FC = () => {
         referralCode: '',
         licenseNumber: '',
     });
+    const [errors, setErrors] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
 
-    const handleNext = () => {
-        if (step < 3) setStep(step + 1);
+    const validateStep = () => {
+        const newErrors: string[] = [];
+        if (step === 1) {
+            if (!formData.partnerType) newErrors.push('partnerType');
+            if (!formData.firstName) newErrors.push('firstName');
+            if (!formData.lastName) newErrors.push('lastName');
+            if (!formData.dob) newErrors.push('dob');
+            if (!formData.gender) newErrors.push('gender');
+        } else if (step === 2) {
+            if (!formData.licenseNumber) newErrors.push('licenseNumber');
+        }
+        setErrors(newErrors);
+        return newErrors.length === 0;
+    };
+
+    const handleNext = async () => {
+        if (validateStep()) {
+            setLoading(true);
+            await new Promise(resolve => setTimeout(resolve, 800));
+            setLoading(false);
+            if (step < 4) {
+                setStep(step + 1);
+                setErrors([]);
+            }
+        }
     };
 
     const handleBack = () => {
-        if (step > 1) setStep(step - 1);
+        if (step > 1) {
+            setStep(step - 1);
+            setErrors([]);
+        }
     };
 
     const renderStep1 = () => (
@@ -37,9 +65,9 @@ const RegistrationFlow: React.FC = () => {
             <h2 className="section-title">Personal Information</h2>
             <p className="section-subtitle">Only your first name and vehicle details are visible to clients during the booking</p>
 
-            <div className="form-group">
+            <div className={`form-group ${errors.includes('partnerType') ? 'has-error' : ''}`}>
                 <label>I want to join reloExpress as: <span>*</span></label>
-                <select className="select-field" value={formData.partnerType} onChange={(e) => setFormData({ ...formData, partnerType: e.target.value })}>
+                <select className="select-field" value={formData.partnerType} onChange={(e) => { setFormData({ ...formData, partnerType: e.target.value }); setErrors(errors.filter(e => e !== 'partnerType')); }}>
                     <option value="">Select option</option>
                     <option value="courier">Car driver</option>
                     <option value="motorbike">Motorbike driver</option>
@@ -52,24 +80,24 @@ const RegistrationFlow: React.FC = () => {
                 <a href="#" className="fleet-link">Sign up as a fleet owner →</a>
             </div>
 
-            <div className="form-group">
+            <div className={`form-group ${errors.includes('firstName') ? 'has-error' : ''}`}>
                 <label>First name <span>*</span></label>
-                <input type="text" className="input-field" placeholder="First name" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} />
+                <input type="text" className="input-field" placeholder="First name" value={formData.firstName} onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }); setErrors(errors.filter(e => e !== 'firstName')); }} />
             </div>
 
-            <div className="form-group">
+            <div className={`form-group ${errors.includes('lastName') ? 'has-error' : ''}`}>
                 <label>Last name <span>*</span></label>
-                <input type="text" className="input-field" placeholder="Last name" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} />
+                <input type="text" className="input-field" placeholder="Last name" value={formData.lastName} onChange={(e) => { setFormData({ ...formData, lastName: e.target.value }); setErrors(errors.filter(e => e !== 'lastName')); }} />
             </div>
 
-            <div className="form-group">
+            <div className={`form-group ${errors.includes('dob') ? 'has-error' : ''}`}>
                 <label>Date of Birth <span>*</span></label>
-                <input type="date" className="input-field" value={formData.dob} onChange={(e) => setFormData({ ...formData, dob: e.target.value })} />
+                <input type="date" className="input-field" value={formData.dob} onChange={(e) => { setFormData({ ...formData, dob: e.target.value }); setErrors(errors.filter(e => e !== 'dob')); }} />
             </div>
 
-            <div className="form-group">
+            <div className={`form-group ${errors.includes('gender') ? 'has-error' : ''}`}>
                 <label>Gender <span>*</span></label>
-                <select className="select-field" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })}>
+                <select className="select-field" value={formData.gender} onChange={(e) => { setFormData({ ...formData, gender: e.target.value }); setErrors(errors.filter(e => e !== 'gender')); }}>
                     <option value="">Select option</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -84,7 +112,9 @@ const RegistrationFlow: React.FC = () => {
             </div>
 
             <div className="reg-footer">
-                <button className="btn-next-bolt" onClick={handleNext}>Next</button>
+                <button className="btn-next-bolt" onClick={handleNext} disabled={loading}>
+                    {loading ? <div className="bolt-loader-thick"></div> : 'Next'}
+                </button>
             </div>
         </div>
     );
@@ -94,9 +124,9 @@ const RegistrationFlow: React.FC = () => {
             <h2 className="section-title">Driver Information</h2>
             <p className="section-subtitle">Your national ID and license details will be kept private.</p>
 
-            <div className="form-group">
+            <div className={`form-group ${errors.includes('licenseNumber') ? 'has-error' : ''}`}>
                 <label>Driver's license number for Cars / NIN for Motorbike and Tricycles. <span>*</span></label>
-                <input type="text" className="input-field" placeholder="AB235235" value={formData.licenseNumber} onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })} />
+                <input type="text" className="input-field" placeholder="AB235235" value={formData.licenseNumber} onChange={(e) => { setFormData({ ...formData, licenseNumber: e.target.value }); setErrors(errors.filter(e => e !== 'licenseNumber')); }} />
                 <p className="form-help">If you're a Car driver, add your license number on your driver's license, if you're a Motorbike or Tricycle driver, add your National ID number.</p>
             </div>
 
@@ -119,8 +149,10 @@ const RegistrationFlow: React.FC = () => {
             </div>
 
             <div className="reg-footer">
-                <button className="btn-back-bolt" onClick={handleBack}>Back</button>
-                <button className="btn-next-bolt" onClick={handleNext}>Next</button>
+                <button className="btn-back-bolt" onClick={handleBack} disabled={loading}>Back</button>
+                <button className="btn-next-bolt" onClick={handleNext} disabled={loading}>
+                    {loading ? <div className="bolt-loader-thick"></div> : 'Next'}
+                </button>
             </div>
         </div>
     );
