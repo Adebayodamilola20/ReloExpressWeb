@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import VerificationMethod from './VerificationMethod';
+import { useNavigate } from 'react-router-dom';
 import './RegistrationForm.css';
 
 const cities = ['Lagos', 'Abuja', 'Port Harcourt', 'Kano', 'Ibadan', 'Benin City'];
 
 const RegistrationForm: React.FC = () => {
+    const navigate = useNavigate();
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [city, setCity] = useState('Lagos');
     const [agreed, setAgreed] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -26,14 +26,9 @@ const RegistrationForm: React.FC = () => {
             return;
         }
 
-        // Simulating form submission
-        console.log('Form submitted:', { email, phone, city });
-        setIsSubmitted(true);
+        // Navigate to the verification page
+        navigate('/verify', { state: { phone, email, city } });
     };
-
-    if (isSubmitted) {
-        return <VerificationMethod phone={phone} />;
-    }
 
     return (
         <div className="reg-form-wrap">
@@ -85,7 +80,6 @@ const RegistrationForm: React.FC = () => {
                                 <option key={c} value={c}>{c}</option>
                             ))}
                         </select>
-                        <span className="select-clear" onClick={() => setCity('')}>✕</span>
                         <span className="select-arrow">▾</span>
                     </div>
                 </div>

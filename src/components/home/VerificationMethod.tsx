@@ -1,29 +1,92 @@
-import React from 'react';
-import { MessageCircle, Send } from 'lucide-react';
+import React, { useState } from 'react';
+import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import './VerificationMethod.css';
 
 interface VerificationMethodProps {
     phone: string;
+    onSuccess: () => void;
 }
 
-const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone }) => {
+const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSuccess }) => {
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+
+    const showToast = (type: 'success' | 'error' | 'info', message: string) => {
+        setStatus({ type, message });
+        setTimeout(() => setStatus(null), 5000);
+    };
+
+    const handleSendSMS = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('http://127.0.0.1:5001/api/verify/send-sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phoneNumber: phone }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', 'Verification code sent to your phone!');
+                setTimeout(() => onSuccess(), 1000); // Navigate to OTP screen
+            } else {
+                showToast('error', data.message || 'Failed to send verification code.');
+            }
+        } catch (error) {
+            console.error('SMS Error:', error);
+            showToast('error', 'Network error. Please make sure the server is running.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSendWhatsApp = () => {
+        showToast('info', 'WhatsApp verification is currently under development.');
+    };
+
     return (
         <div className="verification-method-wrap">
             <div className="verification-content">
-                <img src="/logo.svg" alt="reloExpress" className="verification-logo" />
+                <div className="otp-header-logo">
+                    <span className="logo-text">reloExpress</span>
+                </div>
                 <h2>Choose the verification method</h2>
                 <p className="verification-subtitle">
                     Verification code will be sent to:<br />
-                    <strong>+234{phone}</strong>
+                    <strong>+234 {phone}</strong>
                 </p>
 
+                {status && (
+                    <div className={`verification-toast ${status.type}`}>
+                        {status.type === 'success' && <CheckCircle size={18} />}
+                        {status.type === 'error' && <AlertCircle size={18} />}
+                        {status.type === 'info' && <AlertCircle size={18} />}
+                        <span>{status.message}</span>
+                    </div>
+                )}
+
                 <div className="verification-buttons">
-                    <button className="verification-btn sms">
-                        <MessageCircle size={20} className="btn-icon" />
-                        <span>Get code via SMS</span>
+                    <button
+                        className="bolt-verify-btn sms"
+                        onClick={handleSendSMS}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <Loader2 size={24} className="animate-spin" />
+                        ) : (
+                            <>
+                                <MessageCircle size={24} />
+                                <span>Get code via SMS</span>
+                            </>
+                        )}
                     </button>
-                    <button className="verification-btn whatsapp">
-                        <Send size={20} className="btn-icon" />
+                    <button
+                        className="bolt-verify-btn whatsapp"
+                        onClick={handleSendWhatsApp}
+                        disabled={loading}
+                    >
+                        <Send size={24} />
                         <span>Get code via WhatsApp</span>
                     </button>
                 </div>

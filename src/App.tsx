@@ -1,31 +1,22 @@
-import Navbar from './components/common/Navbar';
-import Hero from './components/home/Hero';
-import PartnerTypes from './components/home/PartnerTypes';
-import Benefits from './components/home/Benefits';
-import CityVision from './components/home/CityVision';
-import FAQ from './components/home/FAQ';
-import AppDownload from './components/home/AppDownload';
-import HowAppWorks from './components/home/HowAppWorks';
-import CityTools from './components/home/CityTools';
-import Safety from './components/home/Safety';
-import Footer from './components/common/Footer';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import VerifyPage from './pages/VerifyPage';
+import OTPPage from './pages/OTPPage';
+import RegistrationPage from './pages/RegistrationPage';
 import './App.css';
 
 function App() {
   return (
-    <div className="app">
-      <Navbar />
-      <Hero />
-      <PartnerTypes />
-      <Benefits />
-      <HowAppWorks />
-      <CityVision />
-      <CityTools />
-      <Safety />
-      <FAQ />
-      <AppDownload />
-      <Footer />
-    </div>
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/verify" element={<VerifyPage />} />
+          <Route path="/otp" element={<OTPPage />} />
+          <Route path="/register" element={<RegistrationPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

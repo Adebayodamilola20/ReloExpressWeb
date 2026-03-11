@@ -54,6 +54,7 @@
     font-size: 1rem;
     outline: none;
     transition: var(--transition);
+    color: #1e1e1e;
 }
 
 .field-group input:focus {
@@ -78,6 +79,7 @@
     white-space: nowrap;
     flex-shrink: 0;
     font-weight: 600;
+    color: #1e1e1e;
 }
 
 .flag {
@@ -118,6 +120,7 @@
     padding-right: 64px;
     cursor: pointer;
     transition: var(--transition);
+    color: #1e1e1e;
 }
 
 .select-wrap select:focus {

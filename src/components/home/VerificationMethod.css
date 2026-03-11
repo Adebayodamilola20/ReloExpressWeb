@@ -1,44 +1,39 @@
 .verification-method-wrap {
     background: #fff;
-    padding: 40px 30px;
+    padding: 60px 30px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 450px;
-    margin: 0 auto;
-}
-
-.verification-logo {
-    height: 32px;
-    margin-bottom: 30px;
+    max-width: 480px;
+    margin: 40px auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .verification-content h2 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     color: #1e1e1e;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .verification-subtitle {
-    font-size: 15px;
+    font-size: 16px;
     color: #666;
-    line-height: 1.6;
-    margin-bottom: 35px;
+    line-height: 1.5;
+    margin-bottom: 40px;
 }
 
 .verification-subtitle strong {
     color: #1e1e1e;
-    font-size: 17px;
+    font-size: 18px;
 }
 
 .verification-buttons {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 16px;
 }
 
-.verification-btn {
+.bolt-verify-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,37 +42,48 @@
     border-radius: 50px;
     border: none;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.verification-btn.sms {
     background-color: #32bb78;
     color: white;
 }
 
-.verification-btn.whatsapp {
-    background-color: #32bb78;
-    color: white;
-}
-
-.verification-btn:hover {
-    transform: translateY(-2px);
+.bolt-verify-btn:hover {
     box-shadow: 0 4px 12px rgba(50, 187, 120, 0.3);
-    opacity: 0.95;
 }
 
-.btn-icon {
-    flex-shrink: 0;
+.bolt-verify-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
-    .verification-method-wrap {
-        padding: 30px 20px;
-    }
+.verification-toast {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease;
+}
 
-    .verification-content h2 {
-        font-size: 20px;
-    }
+.verification-toast.error {
+    background: #fff1f0;
+    color: #cf1322;
+    border: 1px solid #ffa39e;
+}
+
+.verification-toast.success {
+    background: #f6ffed;
+    color: #32bb78;
+    border: 1px solid #b7eb8f;
+}
+
+.verification-toast.info {
+    background: #e6f7ff;
+    color: #1890ff;
+    border: 1px solid #91d5ff;
 }

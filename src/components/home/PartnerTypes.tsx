@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import './PartnerTypes.css';
+import relo1 from "@/assets/relo1.png";
+import relo2 from "@/assets/relo2.png";
+
 
 const partners = [
     {
@@ -19,7 +22,7 @@ const partners = [
         description:
             'You decide when and how often you deliver — weekdays, evenings, weekends, or just the occasional hour — it\'s up to you.',
         cta: 'Register as a courier',
-        image: 'https://images.unsplash.com/photo-1493538993677-56c8e3b6adb6?auto=format&fit=crop&q=80&w=700',
+        image: relo2,
         imageAlt: 'Courier delivering packages',
         imageLeft: false,
     },
@@ -39,7 +42,7 @@ const partners = [
         description:
             'As a fleet owner and reloExpress partner, you can manage your assets from one easy-to-use dashboard and grow your logistics business.',
         cta: 'Register your fleet',
-        image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=700',
+        image: relo1,
         imageAlt: 'Fleet of delivery vehicles',
         imageLeft: false,
     },
