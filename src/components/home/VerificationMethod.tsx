@@ -30,15 +30,23 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
         setStatus(null);
 
         try {
-            // Setup reCAPTCHA
-            if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                    'size': 'invisible',
-                    'callback': () => {
-                        console.log('reCAPTCHA resolved');
-                    }
-                });
+            // Clear existing verifier if any to avoid "element removed" errors
+            if (window.recaptchaVerifier) {
+                try {
+                    window.recaptchaVerifier.clear();
+                } catch (e) {
+                    console.warn('Error clearing reCAPTCHA:', e);
+                }
+                (window as any).recaptchaVerifier = null;
             }
+
+            // Setup new reCAPTCHA
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+                'callback': () => {
+                    console.log('reCAPTCHA resolved');
+                }
+            });
 
             let rawPhone = phone.trim().replace(/\s+/g, '');
             if (rawPhone.startsWith('0')) {
