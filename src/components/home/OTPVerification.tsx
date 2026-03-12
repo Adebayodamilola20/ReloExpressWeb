@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../api/config';
 import './OTPVerification.css';
 
 interface OTPVerificationProps {
@@ -57,36 +56,31 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, on
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(API_ENDPOINTS.CHECK_OTP, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phoneNumber: phone, code }),
-            });
+            const confirmationResult = (window as any).confirmationResult;
 
-            if (!response.ok) {
-                try {
-                    const errorData = await response.json();
-                    setError(errorData.message || 'Verification failed.');
-                    setLoading(false);
-                    return;
-                } catch (e) {
-                    throw new Error(`Server responded with ${response.status}`);
-                }
+            if (!confirmationResult) {
+                setError('Session expired. Please try sending the code again.');
+                return;
             }
 
-            const data = await response.json();
-
-            if (data.success) {
-                setSuccess(true);
-                setTimeout(() => onVerified(), 1500);
-            } else {
-                setError(data.message || 'Invalid code. Please try again.');
-                setOtp(['', '', '', '', '', '']);
-                inputRefs.current[0]?.focus();
+            const result = await confirmationResult.confirm(code);
+            console.log('User signed in successfully:', result.user);
+            
+            setSuccess(true);
+            setTimeout(() => onVerified(), 1500);
+        } catch (err: any) {
+            console.error('OTP Verification Error:', err);
+            let errorMessage = 'Invalid verification code. Please try again.';
+            
+            if (err.code === 'auth/code-expired') {
+                errorMessage = 'The verification code has expired.';
+            } else if (err.code === 'auth/invalid-verification-code') {
+                errorMessage = 'The code entered is incorrect.';
             }
-        } catch (err) {
-            console.error('OTP Detail Error:', err);
-            setError('Connection error. Please try again.');
+
+            setError(errorMessage);
+            setOtp(['', '', '', '', '', '']);
+            inputRefs.current[0]?.focus();
         } finally {
             setLoading(false);
         }
