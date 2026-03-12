@@ -30,7 +30,18 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
         setStatus(null);
 
         try {
-            // Physically clear the container to avoid "already rendered" errors
+            // Robustly clear existing reCAPTCHA instance
+            if (window.recaptchaVerifier) {
+                try {
+                    window.recaptchaVerifier.clear();
+                    console.log('Existing reCAPTCHA cleared');
+                } catch (e) {
+                    console.warn('Error clearing reCAPTCHA:', e);
+                }
+                (window as any).recaptchaVerifier = undefined;
+            }
+
+            // Also clear the container HTML just in case
             const container = document.getElementById('recaptcha-container');
             if (container) {
                 container.innerHTML = '';
@@ -38,14 +49,10 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
 
             // Setup new reCAPTCHA
             window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible',
-                'callback': () => {
-                    console.log('reCAPTCHA resolved');
-                }
+                'size': 'invisible'
             });
 
-            // Pre-render to catch errors early
-            await window.recaptchaVerifier.render();
+            console.log('New reCAPTCHA instance created');
 
             let rawPhone = phone.trim().replace(/\s+/g, '');
             if (rawPhone.startsWith('0')) {
