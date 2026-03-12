@@ -5,10 +5,10 @@ import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } fro
 import './VerificationMethod.css';
 
 declare global {
-  interface Window {
-    recaptchaVerifier: RecaptchaVerifier;
-    confirmationResult: ConfirmationResult;
-  }
+    interface Window {
+        recaptchaVerifier: RecaptchaVerifier;
+        confirmationResult: ConfirmationResult;
+    }
 }
 
 interface VerificationMethodProps {
@@ -51,15 +51,17 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
             window.confirmationResult = confirmationResult;
 
             showToast('success', 'Verification code sent to your phone!');
-            setTimeout(() => onSuccess(), 1000); 
+            setTimeout(() => onSuccess(), 1000);
         } catch (error: any) {
             console.error('Firebase SMS Error:', error);
             let errorMessage = 'Failed to send verification code. Please try again.';
-            
+
             if (error.code === 'auth/invalid-phone-number') {
                 errorMessage = 'The phone number provided is invalid.';
             } else if (error.code === 'auth/too-many-requests') {
                 errorMessage = 'Too many requests. Please try again later.';
+            } else {
+                errorMessage = `Error (${error.code || 'unknown'}): ${error.message || 'Failed to send code.'}`;
             }
 
             showToast('error', errorMessage);
