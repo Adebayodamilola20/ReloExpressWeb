@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { API_ENDPOINTS, API_BASE_URL } from '../../api/config';
+import { auth } from '@/firebase';
+import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } from 'firebase/auth';
 import './VerificationMethod.css';
+
+declare global {
+  interface Window {
+    recaptchaVerifier: RecaptchaVerifier;
+    confirmationResult: ConfirmationResult;
+  }
+}
 
 interface VerificationMethodProps {
     phone: string;
@@ -19,37 +27,42 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
 
     const handleSendSMS = async () => {
         setLoading(true);
-        console.log('Sending SMS to:', phone, 'via:', API_ENDPOINTS.SEND_SMS);
+        setStatus(null);
 
         try {
-            const response = await fetch(API_ENDPOINTS.SEND_SMS, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phoneNumber: phone }),
-            });
-
-            if (!response.ok) {
-                try {
-                    const errorData = await response.json();
-                    showToast('error', errorData.message || 'Server error occurred.');
-                    setLoading(false);
-                    return;
-                } catch (e) {
-                    throw new Error(`Server responded with ${response.status}`);
-                }
+            // Setup reCAPTCHA
+            if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': () => {
+                        console.log('reCAPTCHA resolved');
+                    }
+                });
             }
 
-            const data = await response.json();
-
-            if (data.success && data.message === 'Successfully Sent') {
-                showToast('success', 'Verification code sent to your phone!');
-                setTimeout(() => onSuccess(), 1000); // Navigate to OTP screen
-            } else {
-                showToast('error', data.message || 'Failed to send verification code.');
+            let rawPhone = phone.trim().replace(/\s+/g, '');
+            if (rawPhone.startsWith('0')) {
+                rawPhone = rawPhone.substring(1);
             }
-        } catch (error) {
-            console.error('SMS Error details:', error);
-            showToast('error', `Connection error. Please check if the server is running at: ${API_BASE_URL}`);
+            const formattedPhone = `+234${rawPhone}`;
+            console.log('Sending SMS to:', formattedPhone);
+
+            const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
+            window.confirmationResult = confirmationResult;
+
+            showToast('success', 'Verification code sent to your phone!');
+            setTimeout(() => onSuccess(), 1000); 
+        } catch (error: any) {
+            console.error('Firebase SMS Error:', error);
+            let errorMessage = 'Failed to send verification code. Please try again.';
+            
+            if (error.code === 'auth/invalid-phone-number') {
+                errorMessage = 'The phone number provided is invalid.';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMessage = 'Too many requests. Please try again later.';
+            }
+
+            showToast('error', errorMessage);
         } finally {
             setLoading(false);
         }
@@ -104,6 +117,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                         <span>Get code via WhatsApp</span>
                     </button>
                 </div>
+                <div id="recaptcha-container"></div>
             </div>
         </div>
     );
