@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { auth } from '@/firebase';
 import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } from 'firebase/auth';
@@ -17,6 +18,7 @@ interface VerificationMethodProps {
 }
 
 const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSuccess }) => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
 
@@ -30,36 +32,29 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
         setStatus(null);
 
         try {
-            // Robustly clear existing reCAPTCHA instance
             if (window.recaptchaVerifier) {
                 try {
                     window.recaptchaVerifier.clear();
-                    console.log('Existing reCAPTCHA cleared');
                 } catch (e) {
                     console.warn('Error clearing reCAPTCHA:', e);
                 }
                 (window as any).recaptchaVerifier = undefined;
             }
 
-            // Also clear the container HTML just in case
             const container = document.getElementById('recaptcha-container');
             if (container) {
                 container.innerHTML = '';
             }
 
-            // Setup new reCAPTCHA
             window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                 'size': 'invisible'
             });
-
-            console.log('New reCAPTCHA instance created');
 
             let rawPhone = phone.trim().replace(/\s+/g, '');
             if (rawPhone.startsWith('0')) {
                 rawPhone = rawPhone.substring(1);
             }
             const formattedPhone = `+234${rawPhone}`;
-            console.log('Sending SMS to:', formattedPhone);
 
             const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
             window.confirmationResult = confirmationResult;
@@ -84,8 +79,9 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
         }
     };
 
-    const handleSendWhatsApp = () => {
-        showToast('info', 'WhatsApp verification is currently under development.');
+    const handleWhatsApp = () => {
+        // Bypass for now and go straight to registration
+        navigate('/register', { state: { phone } });
     };
 
     return (
@@ -126,7 +122,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                     </button>
                     <button
                         className="bolt-verify-btn whatsapp"
-                        onClick={handleSendWhatsApp}
+                        onClick={handleWhatsApp}
                         disabled={loading}
                     >
                         <Send size={24} />

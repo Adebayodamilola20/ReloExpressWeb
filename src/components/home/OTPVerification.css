@@ -1,12 +1,12 @@
 .otp-wrapper {
-    background: #fff;
+    background: var(--bg-white);
     padding: 60px 30px;
     border-radius: 20px;
     text-align: center;
     max-width: 480px;
     margin: 40px auto;
     position: relative;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-md);
 }
 
 .otp-back-btn {
@@ -36,7 +36,7 @@
 .otp-content h2 {
     font-size: 28px;
     font-weight: 700;
-    color: #1e1e1e;
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -57,15 +57,15 @@
 .otp-box {
     width: 60px;
     height: 70px;
-    border: 1px solid #e5e5e5;
-    background: #fcfcfc;
+    border: 1px solid var(--border-color);
+    background: var(--bg-light);
     border-radius: 12px;
     font-size: 28px;
     font-weight: 600;
     text-align: center;
     transition: all 0.2s ease;
     outline: none;
-    color: #1e1e1e;
+    color: var(--text-primary);
 }
 
 .otp-box:focus {

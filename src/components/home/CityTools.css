@@ -1,7 +1,7 @@
 .city-tools {
     padding: 100px 0 60px;
-    background-color: #ffffff;
-    color: var(--primary-dark);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
     overflow: hidden;
 }
 
@@ -23,7 +23,7 @@
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
-    background: #f0f1f2;
+    background: var(--bg-light);
     padding: 6px;
     border-radius: 50px;
     width: fit-content;
@@ -38,18 +38,18 @@
     background: transparent;
     font-size: 0.95rem;
     font-weight: 600;
-    color: #444;
+    color: var(--text-muted);
     cursor: pointer;
     transition: var(--transition);
     white-space: nowrap;
 }
 
 .tab-btn:hover {
-    color: #000;
+    color: var(--text-primary);
 }
 
 .tab-btn.active {
-    background: #2D313F;
+    background: var(--primary-teal);
     color: #ffffff;
 }
 

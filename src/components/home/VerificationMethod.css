@@ -1,17 +1,17 @@
 .verification-method-wrap {
-    background: #fff;
+    background: var(--bg-white);
     padding: 60px 30px;
     border-radius: 20px;
     text-align: center;
     max-width: 480px;
     margin: 40px auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-md);
 }
 
 .verification-content h2 {
     font-size: 28px;
     font-weight: 700;
-    color: #1e1e1e;
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -23,7 +23,7 @@
 }
 
 .verification-subtitle strong {
-    color: #1e1e1e;
+    color: var(--text-primary);
     font-size: 18px;
 }
 

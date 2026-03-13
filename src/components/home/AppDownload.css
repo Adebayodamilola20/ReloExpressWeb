@@ -97,15 +97,16 @@
 .phone-screen {
     width: 100%;
     height: 100%;
-    background: #f8f9fa;
+    background: var(--bg-main);
     border-radius: 30px;
     overflow: hidden;
     position: relative;
+    border: 1px solid var(--border-color);
 }
 
 .mock-app-content {
     padding: 20px;
-    color: var(--text-main);
+    color: var(--text-primary);
 }
 
 .mock-header {
@@ -139,10 +140,11 @@
 }
 
 .mock-delivery-card {
-    background: white;
+    background: var(--bg-light);
     border-radius: 16px;
     padding: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
 }
 
 .card-header {
@@ -153,7 +155,7 @@
 }
 
 .card-body p {
-    color: var(--text-main);
+    color: var(--text-primary);
     font-size: 13px;
     margin-bottom: 5px;
 }

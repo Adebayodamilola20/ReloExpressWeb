@@ -1,7 +1,7 @@
 .city-vision {
     padding: 120px 0;
-    background-color: #111111;
-    color: white;
+    background-color: #121212;
+    color: #ffffff;
     position: relative;
     text-align: left;
 }
@@ -14,7 +14,7 @@
 
 .vision-text h2 {
     font-size: 4rem;
-    color: white;
+    color: #ffffff;
     margin-bottom: 24px;
     line-height: 1.1;
     font-weight: 800;

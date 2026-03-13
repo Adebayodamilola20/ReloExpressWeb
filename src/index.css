@@ -18,6 +18,26 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+  
+  /* Semantic tokens */
+  --bg-main: var(--bg-white);
+  --text-primary: var(--text-main);
+  --border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] {
+  --text-main: #f8f9fa;
+  --text-muted: #b2bec3;
+  --bg-white: #1a1a1a;
+  --bg-light: #2d2d2d;
+  --accent-mint: #1a2e24;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.6);
+  
+  --bg-main: #121212;
+  --text-primary: var(--text-main);
+  --border-color: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -32,9 +52,9 @@ html {
 
 body {
   font-family: var(--font-family);
-  color: var(--text-main);
+  color: var(--text-primary);
   line-height: 1.6;
-  background-color: var(--bg-white);
+  background-color: var(--bg-main);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
@@ -45,7 +65,16 @@ h3,
 h4 {
   font-weight: 700;
   line-height: 1.2;
+  color: var(--text-primary);
+}
+
+/* Specific override if we want them to be primary-dark in light mode only */
+:root h1, :root h2, :root h3, :root h4 {
   color: var(--primary-dark);
+}
+
+[data-theme='dark'] h1, [data-theme='dark'] h2, [data-theme='dark'] h3, [data-theme='dark'] h4 {
+  color: var(--text-primary);
 }
 
 a {

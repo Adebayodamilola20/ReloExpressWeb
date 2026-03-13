@@ -1,7 +1,7 @@
 .benefits-section {
     padding: 100px 0;
-    background-color: #ffffff;
-    color: var(--primary-dark);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
 }
 
 .benefits-header {

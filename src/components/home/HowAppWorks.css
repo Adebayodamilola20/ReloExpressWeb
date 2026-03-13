@@ -1,6 +1,6 @@
 .how-app-works {
     padding: 120px 0;
-    background-color: #ffffff;
+    background-color: var(--bg-main);
     overflow: hidden;
 }
 
@@ -23,7 +23,7 @@
 .app-works-content h2 {
     font-size: 3rem;
     margin-bottom: 20px;
-    color: var(--primary-dark);
+    color: var(--text-primary);
     line-height: 1.2;
 }
 
@@ -67,7 +67,7 @@
 .step-info h3 {
     font-size: 1.35rem;
     margin-bottom: 8px;
-    color: var(--primary-dark);
+    color: var(--text-primary);
 }
 
 .step-info p {
@@ -81,8 +81,8 @@
     width: 600px;
     border-radius: 36px;
     overflow: hidden;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
-    background: #f0f0f0;
+    box-shadow: var(--shadow-lg);
+    background: var(--bg-light);
 }
 
 .geko-mockup-img {

@@ -33,7 +33,7 @@
     text-align: left;
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--primary-dark);
+    color: var(--text-primary);
 }
 
 .faq-chevron {

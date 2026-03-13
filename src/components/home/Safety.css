@@ -1,7 +1,7 @@
 .safety-section {
     padding: 100px 0;
-    background-color: #ffffff;
-    color: var(--primary-dark);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
     overflow: hidden;
 }
 
@@ -31,13 +31,13 @@
 
 .safety-icon-box {
     margin-bottom: 24px;
-    color: var(--primary-dark);
+    color: var(--primary-teal);
 }
 
 .parking-icon-p {
     width: 32px;
     height: 32px;
-    background: var(--primary-dark);
+    background: var(--primary-teal);
     color: white;
     display: flex;
     align-items: center;
