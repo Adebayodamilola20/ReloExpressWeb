@@ -16,7 +16,7 @@ const VerifyPage: React.FC = () => {
         <div className="verify-page" style={{ padding: '40px 20px', minHeight: '100vh', background: '#f8f9fa' }}>
             <VerificationMethod
                 phone={phone}
-                onSuccess={() => navigate('/otp', { state: { phone } })}
+                onSuccess={(pinId) => navigate('/otp', { state: { phone, pinId } })}
             />
         </div>
     );

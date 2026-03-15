@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../../api/config';
 import './OTPVerification.css';
 
 interface OTPVerificationProps {
     phone: string;
+    pinId: string;
     onVerified: () => void;
     onResend: () => void;
 }
 
-const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, onResend }) => {
+const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, pinId, onVerified, onResend }) => {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [timer, setTimer] = useState(60);
     const [loading, setLoading] = useState(false);
@@ -56,6 +58,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, on
         setLoading(true);
         setError(null);
         try {
+            // FIREBASE CODE COMMENTED OUT
+            /*
             const confirmationResult = (window as any).confirmationResult;
 
             if (!confirmationResult) {
@@ -65,20 +69,45 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, onVerified, on
 
             const result = await confirmationResult.confirm(code);
             console.log('User signed in successfully:', result.user);
+            */
+
+            // TERMII INTEGRATION
+            if (!pinId) {
+                setError('Verification session expired. Please go back and request a new code.');
+                setLoading(false);
+                return;
+            }
+
+            const response = await fetch(API_ENDPOINTS.CHECK_OTP, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pinId, code })
+            });
+
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                throw new Error(`Server returned non-JSON response. Ensure backend is deployed/running! Status: ${response.status}`);
+            }
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to verify OTP');
+            }
+
+            // Termii specific check
+            if (data.verified === false || data.verified === 'false' || data.pinId === false) {
+                 throw new Error('Invalid verification code. Please try again.');
+            }
+
+            console.log('Termii Verify OTP Response:', data);
             
             setSuccess(true);
             setTimeout(() => onVerified(), 1500);
         } catch (err: any) {
             console.error('OTP Verification Error:', err);
-            let errorMessage = 'Invalid verification code. Please try again.';
-            
-            if (err.code === 'auth/code-expired') {
-                errorMessage = 'The verification code has expired.';
-            } else if (err.code === 'auth/invalid-verification-code') {
-                errorMessage = 'The code entered is incorrect.';
-            }
-
-            setError(errorMessage);
+            setError(err.message || 'Invalid verification code. Please try again.');
             setOtp(['', '', '', '', '', '']);
             inputRefs.current[0]?.focus();
         } finally {

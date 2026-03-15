@@ -6,6 +6,7 @@ const OTPPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const phone = location.state?.phone || '';
+    const pinId = location.state?.pinId || '';
 
     if (!phone) {
         navigate('/');
@@ -16,6 +17,7 @@ const OTPPage: React.FC = () => {
         <div className="otp-page" style={{ padding: '40px 20px', minHeight: '100vh', background: '#f8f9fa' }}>
             <OTPVerification
                 phone={phone}
+                pinId={pinId}
                 onVerified={() => navigate('/register')}
                 onResend={() => console.log('Resending to', phone)}
             />

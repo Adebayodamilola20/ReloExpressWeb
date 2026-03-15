@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { auth } from '@/firebase';
-import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } from 'firebase/auth';
+import type { ConfirmationResult } from 'firebase/auth';
+import { API_ENDPOINTS } from '../../api/config';
 import './VerificationMethod.css';
 
 declare global {
     interface Window {
-        recaptchaVerifier: RecaptchaVerifier;
         confirmationResult: ConfirmationResult;
     }
 }
 
 interface VerificationMethodProps {
     phone: string;
-    onSuccess: () => void;
+    onSuccess: (pinId?: string) => void;
 }
 
 const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSuccess }) => {
@@ -32,6 +31,8 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
         setStatus(null);
 
         try {
+            // FIREBASE CODE COMMENTED OUT
+            /*
             if (window.recaptchaVerifier) {
                 try {
                     window.recaptchaVerifier.clear();
@@ -58,22 +59,35 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
 
             const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
             window.confirmationResult = confirmationResult;
+            */
 
-            showToast('success', 'Verification code sent to your phone!');
-            setTimeout(() => onSuccess(), 1000);
-        } catch (error: any) {
-            console.error('Firebase SMS Error:', error);
-            let errorMessage = 'Failed to send verification code. Please try again.';
-
-            if (error.code === 'auth/invalid-phone-number') {
-                errorMessage = 'The phone number provided is invalid.';
-            } else if (error.code === 'auth/too-many-requests') {
-                errorMessage = 'Too many requests. Please try again later.';
+            // TERMII INTEGRATION
+            const response = await fetch(API_ENDPOINTS.SEND_SMS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            });
+            
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
             } else {
-                errorMessage = `Error (${error.code || 'unknown'}): ${error.message || 'Failed to send code.'}`;
+                await response.text();
+                throw new Error(`Server returned non-JSON response. Ensure backend is deployed/running! Status: ${response.status}`);
             }
 
-            showToast('error', errorMessage);
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send verification SMS');
+            }
+
+            console.log('Termii Send SMS Response:', data);
+            
+            showToast('success', 'Verification code sent to your phone!');
+            setTimeout(() => onSuccess(data.pinId), 1000); // Pass pinId to OTP page
+        } catch (error: any) {
+            console.error('SMS Send Error:', error);
+            showToast('error', error.message || 'Failed to send verification code. Please try again.');
         } finally {
             setLoading(false);
         }
