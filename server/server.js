@@ -3,6 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
+const { isValidPhoneNumber } = require('libphonenumber-js');
 
 const app = express();
 
@@ -22,8 +23,13 @@ app.use(express.static(path.join(__dirname, '../dist')));
 app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', timestamp: new Date() }));
 
 // --- Termii OTP Integration ---
-const TERMII_API_KEY = process.env.TERMII_API_KEY || 'TLEMELooIbeYmixoGxYgjzKbOuUrLrQfFpFAGXSaYySDBKhCnddMtCoLyMBWLh';
+const TERMII_API_KEY = process.env.TERMII_API_KEY;
 const TERMII_SENDER_ID = 'ReloExpress';
+
+if (!TERMII_API_KEY) {
+    console.error('TERMII_API_KEY environment variable is not set');
+    process.exit(1);
+}
 
 app.post('/api/verify/send-sms', async (req, res) => {
     try {
@@ -31,12 +37,17 @@ app.post('/api/verify/send-sms', async (req, res) => {
         if (!phone) {
             return res.status(400).json({ error: 'Phone number is required' });
         }
+        
+        // Validate phone number format
+        if (!isValidPhoneNumber(phone, 'NG')) {
+            return res.status(400).json({ error: 'Invalid phone number format' });
+        }
 
         // Format phone number to start with 234 without '+' for Termii
         let rawPhone = phone.trim().replace(/\s+/g, '');
         
-        // Remove '+' if present
-        rawPhone = rawPhone.replace('+', '');
+        // Remove all '+' characters
+        rawPhone = rawPhone.replace(/\+/g, '');
         
         if (rawPhone.startsWith('0')) {
             rawPhone = rawPhone.substring(1);
@@ -59,15 +70,13 @@ app.post('/api/verify/send-sms', async (req, res) => {
             pin_type: 'NUMERIC'
         };
 
-        console.log('Sending Termii Request:', JSON.stringify(termiiPayload, null, 2));
-
-        const response = await axios.post('https://api.ng.termii.com/api/sms/otp/send', termiiPayload);
+        const response = await axios.post('https://api.ng.termii.com/api/sms/otp/send', termiiPayload, { timeout: 10000 });
         res.json(response.data);
     } catch (error) {
-        console.error('Termii Send SMS Error:', error.response?.data || error.message);
-        res.status(500).json({ 
-            error: 'Failed to send verification SMS via Termii', 
-            details: error.response?.data 
+        console.error('Termii Send SMS Error:', error.message);
+        res.status(500).json({
+            error: 'Failed to send verification SMS via Termii',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 });
@@ -78,19 +87,24 @@ app.post('/api/verify/check-otp', async (req, res) => {
         if (!pinId || !code) {
             return res.status(400).json({ error: 'Pin ID and code are required' });
         }
+        
+        // Validate code format (numeric and 6 digits)
+        if (!/^\d{6}$/.test(code)) {
+            return res.status(400).json({ error: 'Invalid code format' });
+        }
 
         const response = await axios.post('https://api.ng.termii.com/api/sms/otp/verify', {
             api_key: TERMII_API_KEY,
             pin_id: pinId,
             pin: code
-        });
-
+        }, { timeout: 10000 });
+        
         res.json(response.data);
     } catch (error) {
-        console.error('Termii Verify OTP Error:', error.response?.data || error.message);
-        res.status(500).json({ 
+        console.error('Termii Verify OTP Error:', error.message);
+        res.status(500).json({
             error: 'Failed to verify OTP with Termii',
-            details: error.response?.data
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 });
