@@ -1,15 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import type { ConfirmationResult } from 'firebase/auth';
+import { Loader2, CheckCircle, AlertCircle, MessageCircle, Send } from 'lucide-react';
 import { API_ENDPOINTS } from '../../api/config';
 import './VerificationMethod.css';
-
-declare global {
-    interface Window {
-        confirmationResult: ConfirmationResult;
-    }
-}
 
 interface VerificationMethodProps {
     phone: string;
@@ -31,37 +24,6 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
         setStatus(null);
 
         try {
-            // FIREBASE CODE COMMENTED OUT
-            /*
-            if (window.recaptchaVerifier) {
-                try {
-                    window.recaptchaVerifier.clear();
-                } catch (e) {
-                    console.warn('Error clearing reCAPTCHA:', e);
-                }
-                (window as any).recaptchaVerifier = undefined;
-            }
-
-            const container = document.getElementById('recaptcha-container');
-            if (container) {
-                container.innerHTML = '';
-            }
-
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible'
-            });
-
-            let rawPhone = phone.trim().replace(/\s+/g, '');
-            if (rawPhone.startsWith('0')) {
-                rawPhone = rawPhone.substring(1);
-            }
-            const formattedPhone = `+234${rawPhone}`;
-
-            const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
-            window.confirmationResult = confirmationResult;
-            */
-
-            // TERMII INTEGRATION
             const response = await fetch(API_ENDPOINTS.SEND_SMS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -72,19 +34,27 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") !== -1) {
                 data = await response.json();
+                if (!data || typeof data !== 'object') {
+                    throw new Error("Invalid response format from server");
+                }
             } else {
-                await response.text();
-                throw new Error(`Server returned non-JSON response. Ensure backend is deployed/running! Status: ${response.status}`);
+                throw new Error("Server returned non-JSON response: " + (await response.text()));
             }
 
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to send verification SMS');
             }
 
-            console.log('Termii Send SMS Response:', data);
-            
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Termii Send SMS Response:', data);
+            }
+
+            if (!data.pinId) {
+                throw new Error('Missing pinId in response');
+            }
+
             showToast('success', 'Verification code sent to your phone!');
-            setTimeout(() => onSuccess(data.pinId), 1000); // Pass pinId to OTP page
+            setTimeout(() => onSuccess(data.pinId), 1000);
         } catch (error: any) {
             console.error('SMS Send Error:', error);
             showToast('error', error.message || 'Failed to send verification code. Please try again.');
@@ -94,7 +64,6 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
     };
 
     const handleWhatsApp = () => {
-        // Bypass for now and go straight to registration
         navigate('/register', { state: { phone } });
     };
 
@@ -143,7 +112,6 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                         <span>Get code via WhatsApp</span>
                     </button>
                 </div>
-                <div id="recaptcha-container"></div>
             </div>
         </div>
     );
