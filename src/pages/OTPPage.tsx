@@ -5,10 +5,15 @@ import OTPVerification from '../components/home/OTPVerification';
 const OTPPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const phone = location.state?.phone || '';
-    const pinId = location.state?.pinId || '';
+    const phone: string = location.state?.phone || '';
+    const pinId: string = location.state?.pinId || '';
 
     if (!phone) {
+        navigate('/');
+        return null;
+    }
+    if (!pinId) {
+        console.error('pinId is missing');
         navigate('/');
         return null;
     }
@@ -19,7 +24,7 @@ const OTPPage: React.FC = () => {
                 phone={phone}
                 pinId={pinId}
                 onVerified={() => navigate('/register')}
-                onResend={() => console.log('Resending to', phone)}
+                onResend={() => console.error('Resending to', phone)}
             />
         </div>
     );
