@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../api/config';
 import './OTPVerification.css';
 
+/**
+ * OTPVerification component
+ * Handles OTP verification for user phone number
+ */
 interface OTPVerificationProps {
     phone: string;
     pinId: string;
@@ -31,7 +34,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, pinId, onVerif
     }, [timer]);
 
     const handleChange = (index: number, value: string) => {
-        if (!/^\d*$/.test(value)) return;
+        if (!/^d*$/.test(value)) return;
 
         const newOtp = [...otp];
         newOtp[index] = value.slice(-1);
@@ -58,35 +61,23 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, pinId, onVerif
         setLoading(true);
         setError(null);
         try {
-            // FIREBASE CODE COMMENTED OUT
-            /*
-            const confirmationResult = (window as any).confirmationResult;
-
-            if (!confirmationResult) {
-                setError('Session expired. Please try sending the code again.');
-                return;
-            }
-
-            const result = await confirmationResult.confirm(code);
-            console.log('User signed in successfully:', result.user);
-            */
-
-            // TERMII INTEGRATION
             if (!pinId) {
-                setError('Verification session expired. Please go back and request a new code.');
-                setLoading(false);
-                return;
+                throw new Error('Verification session expired. Please go back and request a new code.');
             }
 
-            const response = await fetch(API_ENDPOINTS.CHECK_OTP, {
+            const response = await fetch('https://termii.com/api/verify-pin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pinId, code })
             });
 
+            if (!response) {
+                throw new Error('No response from server');
+            }
+
             let data;
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.indexOf('application/json') !== -1) {
                 data = await response.json();
             } else {
                 throw new Error(`Server returned non-JSON response. Ensure backend is deployed/running! Status: ${response.status}`);
@@ -98,16 +89,16 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, pinId, onVerif
 
             // Termii specific check
             if (data.verified === false || data.verified === 'false' || data.pinId === false) {
-                 throw new Error('Invalid verification code. Please try again.');
+                throw new Error('Invalid verification code. Please try again.');
             }
 
             console.log('Termii Verify OTP Response:', data);
-            
+
             setSuccess(true);
             setTimeout(() => onVerified(), 1500);
         } catch (err: any) {
             console.error('OTP Verification Error:', err);
-            setError(err.message || 'Invalid verification code. Please try again.');
+            setError(err.message || 'An error occurred while verifying OTP. Please try again.');
             setOtp(['', '', '', '', '', '']);
             inputRefs.current[0]?.focus();
         } finally {
@@ -179,7 +170,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ phone, pinId, onVerif
                     ) : (
                         <p className="otp-timer">
                             {timer > 0 ? (
-                                <>Resend code in <strong>{timer}</strong></>
+                                <>Resend code in <strong>{timer}</strong>
+                                </>
                             ) : (
                                 <button className="resend-link" onClick={handleResendClick}>
                                     Resend code
