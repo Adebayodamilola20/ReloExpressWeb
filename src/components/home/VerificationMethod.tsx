@@ -1,15 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import type { ConfirmationResult } from 'firebase/auth';
 import { API_ENDPOINTS } from '../../api/config';
 import './VerificationMethod.css';
-
-declare global {
-    interface Window {
-        confirmationResult: ConfirmationResult;
-    }
-}
 
 interface VerificationMethodProps {
     phone: string;
@@ -31,37 +23,6 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
         setStatus(null);
 
         try {
-            // FIREBASE CODE COMMENTED OUT
-            /*
-            if (window.recaptchaVerifier) {
-                try {
-                    window.recaptchaVerifier.clear();
-                } catch (e) {
-                    console.warn('Error clearing reCAPTCHA:', e);
-                }
-                (window as any).recaptchaVerifier = undefined;
-            }
-
-            const container = document.getElementById('recaptcha-container');
-            if (container) {
-                container.innerHTML = '';
-            }
-
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible'
-            });
-
-            let rawPhone = phone.trim().replace(/\s+/g, '');
-            if (rawPhone.startsWith('0')) {
-                rawPhone = rawPhone.substring(1);
-            }
-            const formattedPhone = `+234${rawPhone}`;
-
-            const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
-            window.confirmationResult = confirmationResult;
-            */
-
-            // TERMII INTEGRATION
             const response = await fetch(API_ENDPOINTS.SEND_SMS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -94,7 +55,6 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
     };
 
     const handleWhatsApp = () => {
-        // Bypass for now and go straight to registration
         navigate('/register', { state: { phone } });
     };
 
@@ -111,12 +71,7 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                 </p>
 
                 {status && (
-                    <div className={`verification-toast ${status.type}`}>
-                        {status.type === 'success' && <CheckCircle size={18} />}
-                        {status.type === 'error' && <AlertCircle size={18} />}
-                        {status.type === 'info' && <AlertCircle size={18} />}
-                        <span>{status.message}</span>
-                    </div>
+                    <div className={`verification-toast ${status.type}`}>{status.message}</div>
                 )}
 
                 <div className="verification-buttons">
@@ -126,10 +81,9 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                         disabled={loading}
                     >
                         {loading ? (
-                            <Loader2 size={24} className="animate-spin" />
+                            <div>Loading...</div>
                         ) : (
                             <>
-                                <MessageCircle size={24} />
                                 <span>Get code via SMS</span>
                             </>
                         )}
@@ -139,11 +93,9 @@ const VerificationMethod: React.FC<VerificationMethodProps> = ({ phone, onSucces
                         onClick={handleWhatsApp}
                         disabled={loading}
                     >
-                        <Send size={24} />
                         <span>Get code via WhatsApp</span>
                     </button>
                 </div>
-                <div id="recaptcha-container"></div>
             </div>
         </div>
     );
