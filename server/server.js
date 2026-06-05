@@ -3,12 +3,16 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
+const { validate: isEmail } = require('email-validator');
+const { validate: isPhoneNumber } = require('phone-number-validator');
 
 const app = express();
 
 // Basic Logger
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    }
     next();
 });
 
@@ -22,8 +26,12 @@ app.use(express.static(path.join(__dirname, '../dist')));
 app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', timestamp: new Date() }));
 
 // --- Termii OTP Integration ---
-const TERMII_API_KEY = process.env.TERMII_API_KEY || 'TLEMELooIbeYmixoGxYgjzKbOuUrLrQfFpFAGXSaYySDBKhCnddMtCoLyMBWLh';
-const TERMII_SENDER_ID = 'ReloExpress';
+const TERMII_API_KEY = process.env.TERMII_API_KEY;
+const TERMII_SENDER_ID = process.env.TERMII_SENDER_ID;
+
+if (!TERMII_API_KEY || !TERMII_SENDER_ID) {
+    throw new Error('TERMII_API_KEY and TERMII_SENDER_ID must be set in environment variables');
+}
 
 app.post('/api/verify/send-sms', async (req, res) => {
     try {
@@ -31,13 +39,13 @@ app.post('/api/verify/send-sms', async (req, res) => {
         if (!phone) {
             return res.status(400).json({ error: 'Phone number is required' });
         }
-
+        if (!isPhoneNumber(phone)) {
+            return res.status(400).json({ error: 'Invalid phone number' });
+        }
         // Format phone number to start with 234 without '+' for Termii
         let rawPhone = phone.trim().replace(/\s+/g, '');
-        
         // Remove '+' if present
         rawPhone = rawPhone.replace('+', '');
-        
         if (rawPhone.startsWith('0')) {
             rawPhone = rawPhone.substring(1);
         }
@@ -59,15 +67,19 @@ app.post('/api/verify/send-sms', async (req, res) => {
             pin_type: 'NUMERIC'
         };
 
-        console.log('Sending Termii Request:', JSON.stringify(termiiPayload, null, 2));
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('Sending Termii Request:', JSON.stringify(termiiPayload, null, 2));
+        }
 
         const response = await axios.post('https://api.ng.termii.com/api/sms/otp/send', termiiPayload);
         res.json(response.data);
     } catch (error) {
-        console.error('Termii Send SMS Error:', error.response?.data || error.message);
-        res.status(500).json({ 
-            error: 'Failed to send verification SMS via Termii', 
-            details: error.response?.data 
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Termii Send SMS Error:', error.response?.data || error.message);
+        }
+        res.status(500).json({
+            error: 'Failed to send verification SMS via Termii',
+            details: error.response?.data
         });
     }
 });
@@ -78,6 +90,12 @@ app.post('/api/verify/check-otp', async (req, res) => {
         if (!pinId || !code) {
             return res.status(400).json({ error: 'Pin ID and code are required' });
         }
+        if (typeof pinId !== 'string' || typeof code !== 'string') {
+            return res.status(400).json({ error: 'Pin ID and code must be strings' });
+        }
+        if (pinId.length < 1 || code.length < 1) {
+            return res.status(400).json({ error: 'Pin ID and code must not be empty' });
+        }
 
         const response = await axios.post('https://api.ng.termii.com/api/sms/otp/verify', {
             api_key: TERMII_API_KEY,
@@ -87,8 +105,10 @@ app.post('/api/verify/check-otp', async (req, res) => {
 
         res.json(response.data);
     } catch (error) {
-        console.error('Termii Verify OTP Error:', error.response?.data || error.message);
-        res.status(500).json({ 
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Termii Verify OTP Error:', error.response?.data || error.message);
+        }
+        res.status(500).json({
             error: 'Failed to verify OTP with Termii',
             details: error.response?.data
         });
@@ -103,5 +123,7 @@ app.get('*', (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${port}`);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`Server running on http://0.0.0.0:${port}`);
+    }
 });
